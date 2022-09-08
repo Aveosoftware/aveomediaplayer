@@ -1,17 +1,22 @@
 part of 'package:aveoplayer/aveoplayer.dart';
 
-class PlayerItems extends StatefulWidget {
-  const PlayerItems(
-      {Key? key, required this.url, required this.flickMultiManager})
+class AveoFeedPlayer extends StatefulWidget {
+  const AveoFeedPlayer(
+      {Key? key,
+      required this.url,
+      required this.flickMultiManager,
+      this.height,
+      this.width})
       : super(key: key);
   final String url;
+  final double? height, width;
   final FlickMultiManager flickMultiManager;
 
   @override
-  _PlayerItemsState createState() => _PlayerItemsState();
+  _AveoFeedPlayerState createState() => _AveoFeedPlayerState();
 }
 
-class _PlayerItemsState extends State<PlayerItems> {
+class _AveoFeedPlayerState extends State<AveoFeedPlayer> {
   @override
   late FlickManager flickManager;
 
@@ -44,8 +49,8 @@ class _PlayerItemsState extends State<PlayerItems> {
         }
       },
       child: SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * .6,
+          width: widget.width ?? MediaQuery.of(context).size.width,
+          height: widget.height ?? MediaQuery.of(context).size.height * .6,
           child: VideoPlayerUI(flickManager: flickManager, widget: widget)),
     );
   }
@@ -59,7 +64,7 @@ class VideoPlayerUI extends StatelessWidget {
   }) : super(key: key);
 
   final FlickManager flickManager;
-  final PlayerItems widget;
+  final AveoFeedPlayer widget;
 
   @override
   Widget build(BuildContext context) {
@@ -75,14 +80,8 @@ class VideoPlayerUI extends StatelessWidget {
         videoFit: BoxFit.fill,
         playerLoadingFallback: Positioned.fill(
           child: Stack(
-            children: <Widget>[
-              // Positioned.fill(
-              //   child: Image.asset(
-              //     widget.image!,
-              //     fit: BoxFit.cover,
-              //   ),
-              // ),
-              const Positioned(
+            children: const <Widget>[
+              Positioned(
                 right: 10,
                 top: 10,
                 child: SizedBox(
