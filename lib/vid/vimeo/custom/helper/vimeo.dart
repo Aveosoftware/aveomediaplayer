@@ -78,32 +78,3 @@ extension ExtensionVimeo on Vimeo {
     }
   }
 }
-
-Future<dynamic> initVimeo(
-    {required String id, String accessKey = '', String eventId = ''}) async {
-  var res = await Vimeo(videoId: id, accessKey: '', eventId: '').load;
-  if (res is VimeoError) {
-    return res;
-  } else {
-    VideoPlayerController vPController =
-        VideoPlayerController.network((res as VimeoVideo).videoUrl.toString());
-    vPController.initialize().then((value) {
-      vPController.play();
-    });
-    bool once = false;
-    vPController.addListener(() {
-      Duration position = vPController.value.position;
-      if (position.inMicroseconds == 0) {
-        once = true;
-      }
-      if (position.inSeconds != 0 &&
-          position == vPController.value.duration &&
-          once) {
-        once = false;
-        log('video played successfully');
-        vPController.dispose();
-      }
-    });
-    return vPController;
-  }
-}

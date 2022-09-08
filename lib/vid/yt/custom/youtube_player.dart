@@ -1,6 +1,6 @@
 part of 'package:aveoplayer/aveoplayer.dart';
 
-class YouTubePlayer extends StatefulWidget {
+class AveoYouTubePlayer extends StatefulWidget {
   final Key? playerKey;
   final YoutubePlayerController youtubePlayerController;
   final Widget Function(BuildContext, Widget) builder;
@@ -20,7 +20,7 @@ class YouTubePlayer extends StatefulWidget {
   final bool showVideoProgressIndicator;
   final void Function()? onEnterFullScreen;
   final void Function()? onExitFullScreen;
-  const YouTubePlayer({
+  const AveoYouTubePlayer({
     Key? key,
     required this.youtubePlayerController,
     required this.builder,
@@ -44,10 +44,10 @@ class YouTubePlayer extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<YouTubePlayer> createState() => _YouTubePlayerState();
+  State<AveoYouTubePlayer> createState() => _AveoYouTubePlayerState();
 }
 
-class _YouTubePlayerState extends State<YouTubePlayer> {
+class _AveoYouTubePlayerState extends State<AveoYouTubePlayer> {
   @override
   Widget build(BuildContext context) {
     return YoutubePlayerBuilder(
