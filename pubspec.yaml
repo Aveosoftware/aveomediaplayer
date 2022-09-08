@@ -16,6 +16,8 @@ dependencies:
   video_player: ^2.4.7
   webview_flutter: ^3.0.4
   youtube_player_flutter: ^8.1.0
+  flick_video_player: ^0.3.1
+  visibility_detector: ^0.2.2
 
 dev_dependencies:
   flutter_test:

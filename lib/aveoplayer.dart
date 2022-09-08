@@ -7,6 +7,8 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
+import 'package:flick_video_player/flick_video_player.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 export 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +21,9 @@ export 'package:video_player/video_player.dart';
 import 'package:webview_flutter/webview_flutter.dart' as webview;
 import 'package:http/http.dart' as http;
 part 'package:aveoplayer/vid/videoplayer/video_player.dart';
+part 'package:aveoplayer/vid/video_feed/widgets/flick_multi_manager.dart';
+part 'package:aveoplayer/vid/video_feed/widgets/player_items.dart';
+part 'package:aveoplayer/vid/video_feed/widgets/potrait_controls.dart';
 part 'package:aveoplayer/vid/facebook/embed/ios.dart';
 part 'package:aveoplayer/vid/facebook/embed/android.dart';
 part 'package:aveoplayer/vid/vimeo/embed/android.dart';
