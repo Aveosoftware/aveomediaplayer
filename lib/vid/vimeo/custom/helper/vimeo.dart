@@ -3,17 +3,17 @@ part of 'package:aveoplayer/aveoplayer.dart';
 /// Vimeo Class provides functions to get vimeo data.
 class Vimeo {
   final String? videoId;
-  final String? eventId;
-  final String? accessKey;
+  final String eventId;
+  final String accessKey;
 
   Vimeo({
     this.videoId,
-    this.eventId,
-    this.accessKey,
+    this.eventId = '',
+    this.accessKey = '',
   })  : assert(videoId != null || eventId != null),
         assert(eventId != null && accessKey != null);
 
-  factory Vimeo.fromUrl(Uri url, {String? accessKey}) {
+  factory Vimeo.fromUrl(Uri url, {String accessKey = ''}) {
     String? vId;
     String? eId;
     if (url.pathSegments.contains('event')) {
@@ -22,8 +22,8 @@ class Vimeo {
       vId = url.pathSegments.last;
     }
     return Vimeo(
-      videoId: vId,
-      eventId: eId,
+      videoId: vId ?? '',
+      eventId: eId ?? '',
       accessKey: accessKey,
     );
   }
@@ -31,9 +31,9 @@ class Vimeo {
 
 extension ExtensionVimeo on Vimeo {
   /// get video meta data from vimeo server.
-  Future<dynamic> get load async {
+  Future<VimeoVideo> get load async {
     if (videoId != null) {
-      if (accessKey?.isEmpty ?? true) {
+      if (accessKey.isEmpty) {
         return _videoWithoutAuth;
       }
 
@@ -44,37 +44,37 @@ extension ExtensionVimeo on Vimeo {
   }
 
   /// get private video meta data from vimeo server
-  Future<dynamic> get _videoWithAuth async {
+  Future<VimeoVideo> get _videoWithAuth async {
     try {
       var res = await AuthApiService()
-          .loadByVideoId(accessKey: accessKey!, videoId: videoId!);
+          .loadByVideoId(accessKey: accessKey, videoId: videoId!);
       return await VimeoVideo.fromJsonVideoWithAuth(
           videoId: videoId!,
-          accessKey: accessKey!,
+          accessKey: accessKey,
           json: (res as Map<String, dynamic>));
     } catch (e) {
-      return e;
+      rethrow;
     }
   }
 
   /// get public video meta data from vimeo server
-  Future<dynamic> get _videoWithoutAuth async {
+  Future<VimeoVideo> get _videoWithoutAuth async {
     try {
       var res = await NoneAuthApiService().getVimeoData(id: videoId!);
       return await VimeoVideo.fromJsonVideoWithoutAuth(
           res as Map<String, dynamic>);
     } catch (e) {
-      return e;
+      rethrow;
     }
   }
 
-  Future<dynamic> get _liveStreaming async {
+  Future<VimeoVideo> get _liveStreaming async {
     try {
       var res = await AuthApiService()
-          .loadByEventId(eventId: eventId!, accessKey: accessKey!);
+          .loadByEventId(eventId: eventId, accessKey: accessKey);
       return VimeoVideo.fromJsonLiveEvent(res);
     } catch (e) {
-      return e;
+      rethrow;
     }
   }
 }

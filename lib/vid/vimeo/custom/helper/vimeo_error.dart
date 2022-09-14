@@ -35,3 +35,13 @@ class VimeoError extends Error {
     );
   }
 }
+
+class VimeoException implements Exception {
+  final VimeoError vimeoError;
+  VimeoException(this.vimeoError);
+
+  @override
+  String toString() {
+    return vimeoError.toString();
+  }
+}

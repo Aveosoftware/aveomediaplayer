@@ -2,7 +2,6 @@ part of 'package:aveoplayer/aveoplayer.dart';
 
 class VideoStack extends StatefulWidget {
   final VideoPlayerController videoPlayerController;
-  final Key? playerKey;
   final double aspectRatio;
   final Widget Function(VideoPlayerController videoplayerController)?
       topActions;
@@ -12,7 +11,6 @@ class VideoStack extends StatefulWidget {
       {Key? key,
       required this.videoPlayerController,
       this.aspectRatio = 1,
-      this.playerKey,
       this.topActions,
       this.bottomActions})
       : super(key: key);
@@ -71,7 +69,6 @@ class _VideoStackState extends State<VideoStack>
           children: [
             VideoPlayer(
               widget.videoPlayerController,
-              key: widget.playerKey,
             ),
             GestureDetector(
               behavior: HitTestBehavior.translucent,

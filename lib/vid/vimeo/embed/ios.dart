@@ -1,4 +1,11 @@
-part of 'package:aveoplayer/aveoplayer.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'dart:developer';
+
+import 'package:aveoplayer/vid/video_player_util.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:webview_flutter/webview_flutter.dart' as webview;
 
 //iOS Vimeo player
 class IOSVimeoWidget extends StatefulWidget {

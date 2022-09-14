@@ -1,4 +1,8 @@
-part of 'package:aveoplayer/aveoplayer.dart';
+import 'dart:convert';
+
+import 'package:aveoplayer/vid/video_player_util.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 class AndroidFacebookPlayer extends StatefulWidget {
   final String videoID;

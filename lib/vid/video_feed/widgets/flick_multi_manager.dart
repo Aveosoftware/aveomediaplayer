@@ -1,4 +1,4 @@
-part of 'package:aveoplayer/aveoplayer.dart';
+import 'package:flick_video_player/flick_video_player.dart';
 
 class FlickMultiManager {
   List<FlickManager> _flickManagers = [];

@@ -1,4 +1,10 @@
-part of 'package:aveoplayer/aveoplayer.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'dart:developer';
+
+import 'package:aveoplayer/vid/video_player_util.dart';
+import 'package:flutter/material.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 //iOS YouTube Player
 class IOSYouTubeWidget extends StatefulWidget {
@@ -36,8 +42,8 @@ class _IOSYouTubeWidgetState extends State<IOSYouTubeWidget>
     });
   }
 
-  final Completer<webview.WebViewController> _controller =
-      Completer<webview.WebViewController>();
+  final Completer<WebViewController> _controller =
+      Completer<WebViewController>();
 
   @override
   bool get wantKeepAlive => true;
@@ -88,17 +94,16 @@ class _IOSYouTubeWidgetState extends State<IOSYouTubeWidget>
                   height: currentOrientation == Orientation.portrait
                       ? 250
                       : MediaQuery.of(context).size.height * 1.2,
-                  child: webview.WebView(
+                  child: WebView(
                     key: _key,
                     initialMediaPlaybackPolicy:
-                        webview.AutoMediaPlaybackPolicy.always_allow,
+                        AutoMediaPlaybackPolicy.always_allow,
                     initialUrl: Uri.tryParse(
                             "https://www.youtube.com/embed/${PlayerAppUIUtils.convertYouTubeUrlToId(_videoID)}")
                         .toString(),
-                    javascriptMode: webview.JavascriptMode.unrestricted,
+                    javascriptMode: JavascriptMode.unrestricted,
                     debuggingEnabled: false,
-                    onWebViewCreated:
-                        (webview.WebViewController webViewController) {
+                    onWebViewCreated: (WebViewController webViewController) {
                       _controller.complete(webViewController);
                     },
                     onPageStarted: (String url) {

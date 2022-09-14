@@ -108,7 +108,7 @@ class PlayerAppUIUtils {
 
   static String convertFacebookUrlToId(String url,
       {bool trimWhitespaces = true}) {
-    assert(url.isEmpty, 'Url cannot be empty');
+    assert(url.isNotEmpty, 'Url cannot be empty');
 
     if (trimWhitespaces) url = url.trim();
 

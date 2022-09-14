@@ -1,4 +1,6 @@
-part of 'package:aveoplayer/aveoplayer.dart';
+import 'package:aveoplayer/vid/video_feed/widgets/flick_multi_manager.dart';
+import 'package:flick_video_player/flick_video_player.dart';
+import 'package:flutter/material.dart';
 
 class FeedPlayerPortraitControls extends StatelessWidget {
   const FeedPlayerPortraitControls(

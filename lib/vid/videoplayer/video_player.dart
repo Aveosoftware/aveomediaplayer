@@ -1,11 +1,9 @@
 part of 'package:aveoplayer/aveoplayer.dart';
 
 class AveoVideoPlayer extends StatefulWidget {
-  final VideoPlayerController videoPlayerController;
+  VideoPlayerController videoPlayerController;
   final bool autoplay;
 
-  ///This key will be assigned to internal Video player widget
-  final Key? playerKey;
   final Future<ClosedCaptionFile>? closedCaptionFile;
   final VideoPlayerOptions? videoPlayerOptions;
 
@@ -30,14 +28,13 @@ class AveoVideoPlayer extends StatefulWidget {
   ///This Widget provides it's own scaffold, therefore use it as root Widget of your page.
   ///
   ///and use it's builder method to populate rest of the page and place ```player``` wherever you desire
-  const AveoVideoPlayer(
+  AveoVideoPlayer(
       {Key? key,
       required this.videoPlayerController,
       this.closedCaptionFile,
       this.videoPlayerOptions,
       required this.builder,
       this.autoplay = false,
-      this.playerKey,
       this.topActions,
       this.bottomActions,
       this.placeHolder = const DefaultLoading(),
@@ -57,7 +54,6 @@ class AveoVideoPlayer extends StatefulWidget {
       this.videoPlayerOptions,
       required this.builder,
       this.autoplay = false,
-      required this.playerKey,
       this.topActions,
       this.bottomActions,
       this.placeHolder = const DefaultLoading(),
@@ -80,7 +76,6 @@ class AveoVideoPlayer extends StatefulWidget {
       this.videoPlayerOptions,
       required this.builder,
       this.autoplay = false,
-      required this.playerKey,
       this.topActions,
       this.bottomActions,
       this.placeHolder = const DefaultLoading(),
@@ -101,7 +96,6 @@ class AveoVideoPlayer extends StatefulWidget {
       this.videoPlayerOptions,
       required this.builder,
       this.autoplay = false,
-      required this.playerKey,
       this.topActions,
       this.bottomActions,
       this.placeHolder = const DefaultLoading(),
@@ -123,7 +117,6 @@ class AveoVideoPlayer extends StatefulWidget {
       this.videoPlayerOptions,
       required this.builder,
       this.autoplay = false,
-      required this.playerKey,
       this.topActions,
       this.bottomActions,
       this.placeHolder = const DefaultLoading(),
@@ -157,7 +150,6 @@ class AveoVideoPlayerState extends State<AveoVideoPlayer> {
           aspectRatio: widget.videoPlayerController.value.aspectRatio,
           topActions: widget.topActions,
           bottomActions: widget.bottomActions,
-          playerKey: widget.playerKey,
         );
         setState(() {});
         if (widget.autoplay) {

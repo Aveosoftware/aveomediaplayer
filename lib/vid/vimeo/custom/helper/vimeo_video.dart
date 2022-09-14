@@ -20,7 +20,7 @@ class VimeoVideo {
     required Map<String, dynamic> json,
   }) async {
     if (json.keys.contains('error')) {
-      throw VimeoError.fromJsonAuth(json);
+      throw VimeoException(VimeoError.fromJsonAuth(json));
     }
 
     if (json['embed']?['badges']['live']['streaming'] ?? false) {
@@ -75,7 +75,7 @@ class VimeoVideo {
   static Future<VimeoVideo> fromJsonVideoWithoutAuth(
       Map<String, dynamic> json) async {
     if (json.keys.contains('message')) {
-      throw VimeoError.fromJsonNoneAuth(json);
+      throw VimeoException(VimeoError.fromJsonAuth(json));
     }
     late var files;
     bool isLive = json['video']['live_event'] != null;

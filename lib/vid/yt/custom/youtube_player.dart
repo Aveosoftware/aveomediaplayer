@@ -3,7 +3,7 @@ part of 'package:aveoplayer/aveoplayer.dart';
 class AveoYouTubePlayer extends StatefulWidget {
   final Key? playerKey;
   final YoutubePlayerController youtubePlayerController;
-  final Widget Function(BuildContext, Widget) builder;
+  final Widget Function(BuildContext context, Widget player) builder;
   final double? width;
   final double aspectRatio;
   final Duration controlsTimeOut;

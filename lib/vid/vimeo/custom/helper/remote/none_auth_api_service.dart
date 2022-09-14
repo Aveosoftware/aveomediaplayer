@@ -1,4 +1,7 @@
-part of 'package:aveoplayer/aveoplayer.dart';
+import 'dart:convert';
+
+import 'package:aveoplayer/aveoplayer.dart';
+import 'package:http/http.dart' as http;
 
 /// Getting data of public video from vimeo server.
 class NoneAuthApiService {
