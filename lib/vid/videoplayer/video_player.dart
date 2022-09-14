@@ -1,0 +1,218 @@
+part of 'package:aveoplayer/aveoplayer.dart';
+
+class AveoVideoPlayer extends StatefulWidget {
+  VideoPlayerController videoPlayerController;
+  final bool autoplay;
+
+  final Future<ClosedCaptionFile>? closedCaptionFile;
+  final VideoPlayerOptions? videoPlayerOptions;
+
+  ///These actions will be shown at top of Video
+  final Widget Function(VideoPlayerController videoplayerController)?
+      topActions;
+
+  ///These actions will be shown at bottom of Video
+  final Widget Function(VideoPlayerController videoplayerController)?
+      bottomActions;
+
+  ///Add your page structure here
+  final Widget Function(BuildContext context, Widget player,
+      VideoPlayerController videoPlayerController) builder;
+
+  ///This widget will be shown while the video is being loaded or initaialized in place of ```player```
+  final Widget placeHolder;
+
+  ///This widget will be shown when there is any error, it will replace ```player```
+  final Widget Function(String error)? errorWidget;
+
+  ///This Widget provides it's own scaffold, therefore use it as root Widget of your page.
+  ///
+  ///and use it's builder method to populate rest of the page and place ```player``` wherever you desire
+  AveoVideoPlayer(
+      {Key? key,
+      required this.videoPlayerController,
+      this.closedCaptionFile,
+      this.videoPlayerOptions,
+      required this.builder,
+      this.autoplay = false,
+      this.topActions,
+      this.bottomActions,
+      this.placeHolder = const DefaultLoading(),
+      this.errorWidget})
+      : super(key: key);
+
+  ///This Widget provides it's own scaffold, therefore use it as root Widget of your page.
+  ///
+  ///and use it's builder method to populate rest of the page and place ```player``` wherever you desire
+  ///## URL must be https. as http is not allowed by android
+  AveoVideoPlayer.network(
+      {Key? key,
+      required String uri,
+      VideoFormat? formatHint,
+      Map<String, String> httpHeaders = const <String, String>{},
+      this.closedCaptionFile,
+      this.videoPlayerOptions,
+      required this.builder,
+      this.autoplay = false,
+      this.topActions,
+      this.bottomActions,
+      this.placeHolder = const DefaultLoading(),
+      this.errorWidget})
+      : videoPlayerController = VideoPlayerController.network(uri,
+            formatHint: formatHint,
+            httpHeaders: httpHeaders,
+            closedCaptionFile: closedCaptionFile,
+            videoPlayerOptions: videoPlayerOptions),
+        assert(uri.contains('https://')),
+        super(key: key);
+
+  ///This Widget provides it's own scaffold, therefore use it as root Widget of your page.
+  ///
+  ///and use it's builder method to populate rest of the page and place ```player``` wherever you desire
+  AveoVideoPlayer.file(
+      {Key? key,
+      required File file,
+      this.closedCaptionFile,
+      this.videoPlayerOptions,
+      required this.builder,
+      this.autoplay = false,
+      this.topActions,
+      this.bottomActions,
+      this.placeHolder = const DefaultLoading(),
+      this.errorWidget})
+      : videoPlayerController = VideoPlayerController.file(file,
+            closedCaptionFile: closedCaptionFile,
+            videoPlayerOptions: videoPlayerOptions),
+        super(key: key);
+
+  ///This Widget provides it's own scaffold, therefore use it as root Widget of your page.
+  ///
+  ///and use it's builder method to populate rest of the page and place ```player``` wherever you desire
+  AveoVideoPlayer.asset(
+      {Key? key,
+      required String uri,
+      String? package,
+      this.closedCaptionFile,
+      this.videoPlayerOptions,
+      required this.builder,
+      this.autoplay = false,
+      this.topActions,
+      this.bottomActions,
+      this.placeHolder = const DefaultLoading(),
+      this.errorWidget})
+      : videoPlayerController = VideoPlayerController.asset(uri,
+            package: package,
+            closedCaptionFile: closedCaptionFile,
+            videoPlayerOptions: videoPlayerOptions),
+        super(key: key);
+
+  ///This Widget provides it's own scaffold, therefore use it as root Widget of your page.
+  ///
+  ///and use it's builder method to populate rest of the page and place ```player``` wherever you desire
+  ///# Android Only
+  AveoVideoPlayer.contentURI(
+      {Key? key,
+      required Uri uri,
+      this.closedCaptionFile,
+      this.videoPlayerOptions,
+      required this.builder,
+      this.autoplay = false,
+      this.topActions,
+      this.bottomActions,
+      this.placeHolder = const DefaultLoading(),
+      this.errorWidget})
+      : videoPlayerController = VideoPlayerController.contentUri(uri,
+            closedCaptionFile: closedCaptionFile,
+            videoPlayerOptions: videoPlayerOptions),
+        super(key: key);
+
+  @override
+  State<AveoVideoPlayer> createState() => AveoVideoPlayerState();
+}
+
+class AveoVideoPlayerState extends State<AveoVideoPlayer> {
+  Widget _videoPlayer = const DefaultLoading();
+
+  ValueNotifier<VideoPlayerState> state = ValueNotifier(_VPInit());
+
+  @override
+  void initState() {
+    state.addListener(() {
+      log('state: ${state.value}');
+    });
+
+    state.value = VPLoading();
+    try {
+      widget.videoPlayerController.initialize().then((_) {
+        log('Aspect Ratio: ${widget.videoPlayerController.value.aspectRatio} : isInit: ${widget.videoPlayerController.value.isInitialized}');
+        _videoPlayer = VideoStack(
+          videoPlayerController: widget.videoPlayerController,
+          aspectRatio: widget.videoPlayerController.value.aspectRatio,
+          topActions: widget.topActions,
+          bottomActions: widget.bottomActions,
+        );
+        setState(() {});
+        if (widget.autoplay) {
+          widget.videoPlayerController.play();
+        }
+      });
+      state.value = VPSuccess();
+    } catch (e) {
+      state.value = VPError(error: e.toString());
+      log(e.toString());
+    }
+    super.initState();
+  }
+
+  @override
+  void deactivate() {
+    widget.videoPlayerController.pause();
+    super.deactivate();
+  }
+
+  @override
+  void dispose() {
+    widget.videoPlayerController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<VideoPlayerState>(
+      valueListenable: state,
+      builder: (context, status, _) {
+        Widget temp = const SizedBox.shrink();
+        if (status is VPError) {
+          if (widget.videoPlayerController.value.isPlaying) {
+            widget.videoPlayerController.pause();
+          }
+          temp = widget.errorWidget?.call(status.error) ??
+              DefaultError(error: status.error);
+        } else if (status is VPLoading) {
+          if (widget.videoPlayerController.value.isPlaying) {
+            widget.videoPlayerController.pause();
+          }
+          temp = widget.placeHolder;
+        }
+
+        return ValueListenableBuilder<bool>(
+            valueListenable: widget.videoPlayerController.isFullScreen(),
+            builder: ((context, value, child) {
+              return value
+                  ? child!
+                  : widget.builder(context, temp is SizedBox ? child! : temp,
+                      widget.videoPlayerController);
+            }),
+            child: _videoPlayer);
+      },
+    );
+  }
+}
+
+TextStyle progressStyle = const TextStyle(
+  fontSize: 9,
+  fontWeight: FontWeight.w600,
+  // height: 16,
+  fontStyle: FontStyle.normal,
+  color: Colors.white,
+);
