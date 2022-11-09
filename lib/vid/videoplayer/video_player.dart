@@ -7,6 +7,8 @@ class AveoVideoPlayer extends StatefulWidget {
   final Future<ClosedCaptionFile>? closedCaptionFile;
   final VideoPlayerOptions? videoPlayerOptions;
 
+  final Function(VideoPlayerController videoPlayerController)? onComplete;
+
   ///These actions will be shown at top of Video
   final Widget Function(VideoPlayerController videoplayerController)?
       topActions;
@@ -31,6 +33,7 @@ class AveoVideoPlayer extends StatefulWidget {
   AveoVideoPlayer(
       {Key? key,
       required this.videoPlayerController,
+      this.onComplete,
       this.closedCaptionFile,
       this.videoPlayerOptions,
       required this.builder,
@@ -51,6 +54,7 @@ class AveoVideoPlayer extends StatefulWidget {
       VideoFormat? formatHint,
       Map<String, String> httpHeaders = const <String, String>{},
       this.closedCaptionFile,
+      this.onComplete,
       this.videoPlayerOptions,
       required this.builder,
       this.autoplay = false,
@@ -75,6 +79,7 @@ class AveoVideoPlayer extends StatefulWidget {
       this.closedCaptionFile,
       this.videoPlayerOptions,
       required this.builder,
+      this.onComplete,
       this.autoplay = false,
       this.topActions,
       this.bottomActions,
@@ -97,6 +102,7 @@ class AveoVideoPlayer extends StatefulWidget {
       required this.builder,
       this.autoplay = false,
       this.topActions,
+      this.onComplete,
       this.bottomActions,
       this.placeHolder = const DefaultLoading(),
       this.errorWidget})
@@ -118,6 +124,7 @@ class AveoVideoPlayer extends StatefulWidget {
       required this.builder,
       this.autoplay = false,
       this.topActions,
+      this.onComplete,
       this.bottomActions,
       this.placeHolder = const DefaultLoading(),
       this.errorWidget})
@@ -139,6 +146,20 @@ class AveoVideoPlayerState extends State<AveoVideoPlayer> {
   void initState() {
     state.addListener(() {
       log('state: ${state.value}');
+    });
+    bool onCompleteCalled = false;
+    widget.videoPlayerController.addListener(() async {
+      if ((await widget.videoPlayerController.position) ==
+              widget.videoPlayerController.value.duration &&
+          !onCompleteCalled) {
+        onCompleteCalled = true;
+        widget.onComplete?.call(widget.videoPlayerController);
+      }
+      if (onCompleteCalled &&
+          (await widget.videoPlayerController.position) !=
+              widget.videoPlayerController.value.duration) {
+        onCompleteCalled = false;
+      }
     });
 
     state.value = VPLoading();
