@@ -7,10 +7,10 @@ class AveoVideoPlayer extends StatefulWidget {
   final Future<ClosedCaptionFile>? closedCaptionFile;
   final VideoPlayerOptions? videoPlayerOptions;
 
-  final Function(VideoPlayerController videoPlayerController)? onComplete;
+  final Function? onComplete;
 
   ///These actions will be shown at top of Video
-  final Widget Function(VideoPlayerController videoplayerController)?
+  final Widget Function(VideoPlayerController? videoplayerController)?
       topActions;
 
   ///These actions will be shown at bottom of Video
@@ -141,31 +141,48 @@ class AveoVideoPlayerState extends State<AveoVideoPlayer> {
   Widget _videoPlayer = const DefaultLoading();
 
   ValueNotifier<VideoPlayerState> state = ValueNotifier(_VPInit());
+  bool onCompleteCalled = false;
+
+  voidFunc get _onCompleteClosure => () {
+        try {
+          if (!widget.videoPlayerController.value.isLooping) {
+            if (mounted) {
+              if (widget.videoPlayerController.value.position.inSeconds ==
+                      widget.videoPlayerController.value.duration.inSeconds &&
+                  !onCompleteCalled) {
+                onCompleteCalled = true;
+                widget.onComplete?.call();
+              }
+              if (onCompleteCalled &&
+                  widget.videoPlayerController.value.position.inSeconds !=
+                      widget.videoPlayerController.value.duration.inSeconds) {
+                onCompleteCalled = false;
+              }
+            }
+          }
+        } catch (_) {
+          onCompleteCalled = true;
+          widget.onComplete?.call();
+        }
+      };
 
   @override
-  void initState() {
-    state.addListener(() {
-      log('state: ${state.value}');
-    });
-    bool onCompleteCalled = false;
-    widget.videoPlayerController.addListener(() async {
-      if ((await widget.videoPlayerController.position) ==
-              widget.videoPlayerController.value.duration &&
-          !onCompleteCalled) {
-        onCompleteCalled = true;
-        widget.onComplete?.call(widget.videoPlayerController);
-      }
-      if (onCompleteCalled &&
-          (await widget.videoPlayerController.position) !=
-              widget.videoPlayerController.value.duration) {
-        onCompleteCalled = false;
-      }
-    });
+  void didUpdateWidget(AveoVideoPlayer oldWidget) {
+    if (oldWidget.videoPlayerController.dataSource !=
+        widget.videoPlayerController.dataSource) {
+      oldWidget.videoPlayerController.dispose();
+      reInitStates();
+      setState(() {});
+    }
+    super.didUpdateWidget(oldWidget);
+  }
 
+  void reInitStates() {
+    state.addListener(() {});
+    widget.videoPlayerController.addListener(_onCompleteClosure);
     state.value = VPLoading();
     try {
       widget.videoPlayerController.initialize().then((_) {
-        log('Aspect Ratio: ${widget.videoPlayerController.value.aspectRatio} : isInit: ${widget.videoPlayerController.value.isInitialized}');
         _videoPlayer = VideoStack(
           videoPlayerController: widget.videoPlayerController,
           aspectRatio: widget.videoPlayerController.value.aspectRatio,
@@ -182,6 +199,11 @@ class AveoVideoPlayerState extends State<AveoVideoPlayer> {
       state.value = VPError(error: e.toString());
       log(e.toString());
     }
+  }
+
+  @override
+  void initState() {
+    reInitStates();
     super.initState();
   }
 
@@ -193,6 +215,7 @@ class AveoVideoPlayerState extends State<AveoVideoPlayer> {
 
   @override
   void dispose() {
+    widget.videoPlayerController.removeListener(_onCompleteClosure);
     widget.videoPlayerController.dispose();
     super.dispose();
   }
@@ -215,7 +238,6 @@ class AveoVideoPlayerState extends State<AveoVideoPlayer> {
           }
           temp = widget.placeHolder;
         }
-
         return ValueListenableBuilder<bool>(
             valueListenable: widget.videoPlayerController.isFullScreen(),
             builder: ((context, value, child) {
@@ -229,6 +251,8 @@ class AveoVideoPlayerState extends State<AveoVideoPlayer> {
     );
   }
 }
+
+typedef voidFunc = void Function();
 
 TextStyle progressStyle = const TextStyle(
   fontSize: 9,
