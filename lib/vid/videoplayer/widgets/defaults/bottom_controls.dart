@@ -16,12 +16,27 @@ class _DefaultBottomControlsState extends State<DefaultBottomControls> {
     Timer.periodic(const Duration(seconds: 1), (timer) {
       if (widget.controller.value.isPlaying && mounted) {
         setState(() {
-          sliderVal = ((widget.controller.value.position.inSeconds /
-                  widget.controller.value.duration.inSeconds) *
-              100);
+          if (widget.controller.value.position.inSeconds == 0 &&
+              widget.controller.value.duration.inSeconds == 0) {
+            sliderVal = 0;
+          } else {
+            sliderVal = ((widget.controller.value.position.inSeconds /
+                    widget.controller.value.duration.inSeconds) *
+                100);
+          }
         });
       }
     });
+  }
+
+  @override
+  void didUpdateWidget(DefaultBottomControls oldWidget) {
+    if (oldWidget.controller != widget.controller) {
+      setState(() {
+        sliderVal = 0.0;
+      });
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
