@@ -12,12 +12,7 @@ class PlaybackSpeedYT extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: MediaQuery.of(context).size.height * .35,
-      decoration: BoxDecoration(
-          gradient: LinearGradient(
-        colors: [Color(0xff0A0A0A).withAlpha(235), Color(0xff3E3D3D)],
-        begin: const Alignment(0.0, 0.0),
-        end: const Alignment(0.005, 1),
-      )),
+      color: Theme.of(context).backgroundColor,
       child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Column(
@@ -39,8 +34,7 @@ class PlaybackSpeedYT extends StatelessWidget {
                 },
                 child: Text(
                   '.25x',
-                  style: greetingStyle.copyWith(
-                      fontSize: 14, color: Color(0xffe9e9e9)),
+                  style: greetingStyle,
                 )),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
@@ -56,8 +50,7 @@ class PlaybackSpeedYT extends StatelessWidget {
                 },
                 child: Text(
                   '.5x',
-                  style: greetingStyle.copyWith(
-                      fontSize: 14, color: Color(0xffe9e9e9)),
+                  style: greetingStyle,
                 )),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
@@ -73,8 +66,7 @@ class PlaybackSpeedYT extends StatelessWidget {
                 },
                 child: Text(
                   '.75x',
-                  style: greetingStyle.copyWith(
-                      fontSize: 14, color: Color(0xffe9e9e9)),
+                  style: greetingStyle,
                 )),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
@@ -90,8 +82,7 @@ class PlaybackSpeedYT extends StatelessWidget {
                 },
                 child: Text(
                   '1x',
-                  style: greetingStyle.copyWith(
-                      fontSize: 14, color: Color(0xffe9e9e9)),
+                  style: greetingStyle,
                 )),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
@@ -107,8 +98,7 @@ class PlaybackSpeedYT extends StatelessWidget {
                 },
                 child: Text(
                   '1.25x',
-                  style: greetingStyle.copyWith(
-                      fontSize: 14, color: Color(0xffe9e9e9)),
+                  style: greetingStyle,
                 )),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
@@ -124,8 +114,7 @@ class PlaybackSpeedYT extends StatelessWidget {
                 },
                 child: Text(
                   '1.5x',
-                  style: greetingStyle.copyWith(
-                      fontSize: 14, color: Color(0xffe9e9e9)),
+                  style: greetingStyle,
                 )),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
@@ -141,8 +130,7 @@ class PlaybackSpeedYT extends StatelessWidget {
                 },
                 child: Text(
                   '1.75x',
-                  style: greetingStyle.copyWith(
-                      fontSize: 14, color: Color(0xffe9e9e9)),
+                  style: greetingStyle,
                 )),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
@@ -158,8 +146,7 @@ class PlaybackSpeedYT extends StatelessWidget {
                 },
                 child: Text(
                   '2x',
-                  style: greetingStyle.copyWith(
-                      fontSize: 14, color: Color(0xffe9e9e9)),
+                  style: greetingStyle,
                 )),
           ],
         ),

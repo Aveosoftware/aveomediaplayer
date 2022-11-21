@@ -5,8 +5,6 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:aveoplayer/vid/facebook/embed/android.dart';
-import 'package:aveoplayer/vid/facebook/embed/ios.dart';
 import 'package:aveoplayer/vid/video_feed/widgets/flick_multi_manager.dart';
 import 'package:aveoplayer/vid/video_feed/widgets/potrait_controls.dart';
 import 'package:aveoplayer/vid/vimeo/custom/helper/remote/auth_api_service.dart';
@@ -45,5 +43,3 @@ part 'package:aveoplayer/vid/yt/custom/helper/controller.dart';
 part 'package:aveoplayer/vid/yt/custom/widgets/yt_controls.dart';
 part 'package:aveoplayer/vid/yt/custom/widgets/playback_speed.dart';
 part 'package:aveoplayer/vid/web_view_constructor.dart';
-// part 'package:aveoplayer/vid/network/embed/android.dart';
-// part 'package:aveoplayer/vid/assets/embed/android.dart';

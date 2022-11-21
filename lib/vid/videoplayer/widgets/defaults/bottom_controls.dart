@@ -118,8 +118,8 @@ class _DefaultBottomControlsState extends State<DefaultBottomControls> {
                   max: 100,
                   // divisions: 100,
                   value: sliderVal.toDouble(),
-                  thumbColor: Color(0xffe9e9e9),
-                  activeColor: Color(0xffe9e9e9),
+                  thumbColor: Theme.of(context).primaryColor,
+                  activeColor: Theme.of(context).primaryColor,
                   inactiveColor: Color(0xff3E3D3D),
                   onChanged: (double value) {
                     setState(() {

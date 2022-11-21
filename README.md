@@ -1,92 +1,156 @@
-# AveoMediaPlayer
+# Aveoplayer
 
+Aveoplayer is working towards adding Video playback support as easy as possible for developers
 
+## Features
 
-## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://gitlab.com/aveo-mobile-products/aveomediaplayer.git
-git branch -M main
-git push -uf origin main
-```
-
-## Integrate with your tools
-
-- [ ] [Set up project integrations](https://gitlab.com/aveo-mobile-products/aveomediaplayer/-/settings/integrations)
-
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
+1. [Youtube Video player](#youtube)
+   1. [Embeded web View](#youtube-embeded-web-view)
+   2. [Custom page view](#youtube-custom-page-view)
+2. [Vimeo video player](#vimeo-video-player)
+   1. [Embeded web view](#vimeo-embeded-web-view)
+   2. [Media url fetching from server utility](#use-vimeo-video-player-utiliteis)
+3. [Custom Video player page view](#custom-video-player)
+   1. Default (using pre-fetched video player controller)
+   2. [Network](#custom-video-player)
+   3. File
+   4. Assets
+   5. Content URI
+4. [Social media like video players page](#social-media-like-page) 
+   
 ## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+### YouTube
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+#### YouTube Embeded Web View
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+```dart
+AveoEmbededPlayer(
+                  type: EmbededPlayerType.youTube,
+                  videoID: 'https://www.youtube.com/watch?v=5FNCukepaS8' //Your video URL
+                  )
+```
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+#### YouTube Custom page View
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+```dart
+AveoYouTubePlayer(
+        youtubePlayerController: YoutubePlayerController(
+          initialVideoId: '5FNCukepaS8', //Your video ID
+          flags: const YoutubePlayerFlags(
+            autoPlay: true,
+          ),
+        ),
+        builder: (context, player) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('This is Home'),
+              centerTitle: true,
+            ),
+            body: Column(
+              children: [
+                //This is your video player widget
+                player,
+                Expanded(
+                    child: Column(
+                  children: [
+                    Text('Body data'),
+                  ],
+                ))
+              ],
+            ),
+          );
+        })
+```
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+### Vimeo Video player
 
-## License
-For open source projects, say how it is licensed.
+#### Vimeo Embeded web view
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+```dart
+AveoEmbededPlayer(
+                  type: EmbededPlayerType.vimeo,
+                  videoID: 'https://vimeo.com/347119375' //Your video URL
+                  )
+```
+
+#### Use Vimeo video player Utiliteis
+
+After calling the following example method you can forward the URL to [```AveoVideoPlayer.network()```](#custom-video-player)
+
+```dart
+Future<String> loadVimeoUrl({String vimeoId}) async {
+    try{
+    VimeoVideo vimeoViedo = await Vimeo(videoId: '347119375'/*your video Id*/).load;
+    return vimeoViedo.videoUrl;
+    }
+    catch(e){
+        return 'failed to load Url'
+    }
+}
+```
+
+### Custom Video Player
+
+```dart
+AveoVideoPlayer.network(
+    //Your video URL
+      uri:
+          'https://assets.mixkit.co/videos/preview/mixkit-exercising-by-climbing-the-steps-of-some-bleachers-40758-large.mp4',
+      autoplay: true,
+      onComplete: () => log('video ended'),
+      builder: (context, player, playerController) {
+        return SafeArea(
+          child: Scaffold(
+            body: Column(
+              children: [
+                //This is your video player widget
+                player,
+                Card(
+                  elevation: 5,
+                  margin: EdgeInsets.all(0),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(0)),
+                  child: ListTile(
+                    title: Text('Title'),
+                  ),
+                ),
+                Expanded(
+                    child: SingleChildScrollView(
+                  child: Text('''
+                    description text
+                    '''),
+                ))
+              ],
+            ),
+          ),
+        );
+      },
+    )
+```
+
+### Social media like page
+
+```dart
+//Create a global FlickMultiManager instance;
+FlickMultiManager flickMultiManager = FlickMultiManager();
+//Lsit of Url of your videos
+List<String> videoURLList = [
+'https://assets.mixkit.co/videos/preview/mixkit-healthy-woman-jumping-a-rope-40234-large.mp4',
+'https://assets.mixkit.co/videos/preview/mixkit-exercising-by-climbing-the-steps-of-some-bleachers-40758-large.mp4',
+'https://assets.mixkit.co/videos/preview/mixkit-girl-doing-sit-ups-lying-on-the-floor-4591-large.mp4',
+'https://assets.mixkit.co/videos/preview/mixkit-woman-working-out-with-dumbbells-1313-large.mp4',
+'https://assets.mixkit.co/videos/preview/mixkit-woman-doing-mountain-climber-exercise-726-large.mp4',
+  ];
+ListView.builder(
+        itemCount: videoURLList.length,
+        itemBuilder: (context, index) => AveoFeedPlayer(
+            url: videoURLList[index],
+            flickMultiManager: flickMultiManager),
+      )
+```
+
+## Additional information
+
+This package is developed and maintained by [AveoSoft Pvt Ltd](https://aveosoft.com/).
+For any issues & improvements you can create an issue in Github Issues.
