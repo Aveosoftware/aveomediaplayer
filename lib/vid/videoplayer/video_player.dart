@@ -242,7 +242,12 @@ class AveoVideoPlayerState extends State<AveoVideoPlayer> {
             valueListenable: widget.videoPlayerController.isFullScreen(),
             builder: ((context, value, child) {
               return value
-                  ? child!
+                  ? WillPopScope(
+                      onWillPop: () {
+                        widget.videoPlayerController.toggleFullScreen(context);
+                        return Future.value(false);
+                      },
+                      child: child!)
                   : widget.builder(context, temp is SizedBox ? child! : temp,
                       widget.videoPlayerController);
             }),
