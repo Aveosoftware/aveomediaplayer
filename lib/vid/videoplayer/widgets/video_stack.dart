@@ -47,7 +47,9 @@ class _VideoStackState extends State<VideoStack>
       if (showControls.value) {
         dismissControls();
       } else {
-        animationController.forward();
+        if (mounted) {
+          animationController.forward();
+        }
       }
     });
     animationController = AnimationController(

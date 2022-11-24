@@ -40,18 +40,6 @@ class AveoEmbededPlayer extends StatelessWidget {
                 showVideoTitle: showVideoTitle,
                 title: title,
               );
-      case EmbededPlayerType.facebook:
-        return Platform.isAndroid
-            ? AndroidFacebookPlayer(
-                videoID: videoID,
-                showVideoTitle: showVideoTitle,
-                title: title,
-              )
-            : iOSFaceBookVideoPlayer(
-                videoID: videoID,
-                showVideoTitle: showVideoTitle,
-                title: title,
-              );
       default:
         return Container(
           color: Colors.black,
@@ -68,5 +56,4 @@ class AveoEmbededPlayer extends StatelessWidget {
 enum EmbededPlayerType {
   youTube,
   vimeo,
-  facebook,
 }
