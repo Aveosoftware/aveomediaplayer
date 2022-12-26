@@ -11,15 +11,11 @@ class YTPlayerController extends StatefulWidget {
 
 class _YTPlayerControllerState extends State<YTPlayerController> {
   int sliderVal = 0;
+  late Timer sliderRefresh;
   sliderValSetter() {
-    Timer.periodic(const Duration(seconds: 1), (timer) {
+    sliderRefresh = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (widget.ytController.value.isPlaying && mounted) {
-        setState(() {
-          sliderVal = ((widget.ytController.value.position.inSeconds /
-                      widget.ytController.metadata.duration.inSeconds) *
-                  100)
-              .toInt();
-        });
+        setState(() {});
       }
     });
   }
@@ -28,6 +24,12 @@ class _YTPlayerControllerState extends State<YTPlayerController> {
   void initState() {
     sliderValSetter();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    sliderRefresh.cancel();
+    super.dispose();
   }
 
   @override
@@ -50,37 +52,9 @@ class _YTPlayerControllerState extends State<YTPlayerController> {
           absorbing: !widget.ytController.value.isControlsVisible,
           child: Column(
             children: [
-              // const SizedBox(
-              //   height: 5,
-              // ),
               SizedBox(
                 child: Row(
                   children: [
-                    // Expanded(
-                    //   flex: 2,
-                    //   child: IconButton(
-                    //       onPressed: () {
-                    //         // print(
-                    //         //     'video value: ${playerController.videoNo.value}');
-                    //         if (playerController.videoNo.value != 0) {
-                    //           playerController.videoNo.value--;
-                    //           playerController.nextIsYT.value = playerController
-                    //                   .videos[playerController.videoNo.value]
-                    //                   .url
-                    //                   .contains('vimeo')
-                    //               ? false
-                    //               : true;
-                    //           playerController.queue();
-                    //         }
-                    //       },
-                    //       icon: Icon(
-                    //         Icons.skip_previous,
-                    //         size: 30,
-                    //         color: playerController.videoNo.value == 0
-                    //             ? Colors.grey
-                    //             : Colors.white,
-                    //       )),
-                    // ),
                     IconButton(
                       onPressed: () {
                         widget.ytController.toggleFullScreenMode();
@@ -96,30 +70,6 @@ class _YTPlayerControllerState extends State<YTPlayerController> {
                               color: Colors.white,
                             ),
                     ),
-                    // Expanded(
-                    //   flex: 2,
-                    //   child: IconButton(
-                    //       onPressed: () {
-                    //         // print(
-                    //         //     'video value: ${playerController.videoNo.value}');
-                    //         if (playerController.videoNo.value <
-                    //             playerController.videos.length - 1) {
-                    //           // widget.ytController.seekTo(Duration(
-                    //           //     seconds: widget.ytController.value.metaData
-                    //           //         .duration.inSeconds));
-                    //           playerController.videoNo.value++;
-                    //           playerController.queue();
-                    //         }
-                    //       },
-                    //       icon: Icon(
-                    //         Icons.skip_next,
-                    //         size: 30,
-                    //         color: playerController.videoNo.value ==
-                    //                 playerController.videos.length - 1
-                    //             ? Colors.grey
-                    //             : Colors.white,
-                    //       )),
-                    // ),
                   ],
                 ),
               ),
@@ -129,13 +79,6 @@ class _YTPlayerControllerState extends State<YTPlayerController> {
               SizedBox(
                 child: Row(
                   children: [
-                    Text(
-                      '  ${printDuration(widget.ytController.value.position)}/${printDuration(widget.ytController.metadata.duration)}',
-                      style: progressStyle,
-                    ),
-                    const Spacer(
-                      flex: 1,
-                    ),
                     GestureDetector(
                       onTap: () => showModalBottomSheet(
                           context: context,
@@ -161,32 +104,23 @@ class _YTPlayerControllerState extends State<YTPlayerController> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 5),
-                child: SliderTheme(
-                  data: SliderThemeData(
-                      trackShape: CustomTrackShape(),
-                      overlayShape: SliderComponentShape.noThumb,
-                      thumbShape: const RoundSliderThumbShape(
-                          pressedElevation: 0, enabledThumbRadius: 5),
-                      trackHeight: 2),
-                  child: Slider(
-                    min: 0,
-                    max: 100,
-                    // divisions: 100,
-                    value: sliderVal.toDouble(),
-                    thumbColor: Theme.of(context).primaryColor,
-                    activeColor: Theme.of(context).primaryColor,
-                    inactiveColor: Color(0xff3E3D3D),
-                    onChanged: (double value) {
-                      setState(() {
-                        sliderVal = value.toInt();
-                      });
-                      widget.ytController.seekTo(Duration(
-                          seconds: ((value / 100) *
-                                  widget
-                                      .ytController.metadata.duration.inSeconds)
-                              .toInt()));
-                    },
-                  ),
+                child: av.ProgressBar(
+                  thumbRadius: 5,
+                  thumbGlowRadius: 0,
+                  thumbColor: Theme.of(context).primaryColor,
+                  progressBarColor: Theme.of(context).primaryColor,
+                  baseBarColor: const Color(0xff3E3D3D),
+                  timeLabelTextStyle: progressStyle,
+                  barHeight: Theme.of(context).sliderTheme.trackHeight ?? 3,
+                  timeLabelLocation: av.TimeLabelLocation.sides,
+                  timeLabelType: av.TimeLabelType.totalTime,
+                  bufferedBarColor:
+                      Theme.of(context).primaryColor.withOpacity(.4),
+                  onSeek: (value) => widget.ytController.seekTo(value),
+                  total: widget.ytController.metadata.duration,
+                  progress: widget.ytController.value.position,
+                  buffered: Duration(
+                      seconds: widget.ytController.value.buffered.toInt()),
                 ),
               ),
               SizedBox(

@@ -21,7 +21,7 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 export 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:aveoplayer/vid/vimeo/custom/helper/print_progress.dart';
+import 'package:audio_video_progress_bar/audio_video_progress_bar.dart' as av;
 import 'package:video_player/video_player.dart';
 export 'package:video_player/video_player.dart';
 import 'package:http/http.dart' as http;

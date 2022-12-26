@@ -10,39 +10,25 @@ class DefaultBottomControls extends StatefulWidget {
 }
 
 class _DefaultBottomControlsState extends State<DefaultBottomControls> {
-  double sliderVal = 0.0;
-
+  late Timer sliderRefresh;
   sliderValSetter() {
-    Timer.periodic(const Duration(seconds: 1), (timer) {
+    sliderRefresh = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (widget.controller.value.isPlaying && mounted) {
-        setState(() {
-          if (widget.controller.value.position.inSeconds == 0 &&
-              widget.controller.value.duration.inSeconds == 0) {
-            sliderVal = 0;
-          } else {
-            sliderVal = ((widget.controller.value.position.inSeconds /
-                    widget.controller.value.duration.inSeconds) *
-                100);
-          }
-        });
+        setState(() {});
       }
     });
-  }
-
-  @override
-  void didUpdateWidget(DefaultBottomControls oldWidget) {
-    if (oldWidget.controller != widget.controller) {
-      setState(() {
-        sliderVal = 0.0;
-      });
-    }
-    super.didUpdateWidget(oldWidget);
   }
 
   @override
   void initState() {
     sliderValSetter();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    sliderRefresh.cancel();
+    super.dispose();
   }
 
   @override
@@ -87,7 +73,7 @@ class _DefaultBottomControlsState extends State<DefaultBottomControls> {
                   icon: const Icon(Icons.forward_10, color: Colors.white)),
               IconButton(
                   onPressed: () => widget.controller.toggleFullScreen(context),
-                  icon: widget.controller.isFullScreen().value
+                  icon: widget.controller.isFullScreen.value
                       ? const Icon(
                           Icons.fullscreen_exit,
                           color: Colors.white,
@@ -98,47 +84,35 @@ class _DefaultBottomControlsState extends State<DefaultBottomControls> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           mainAxisSize: MainAxisSize.max,
           children: [
-            Text(
-              printDuration(widget.controller.value.position),
-              style: progressStyle,
-            ),
             const SizedBox(
               width: 10,
             ),
             Expanded(
-              child: SliderTheme(
-                data: SliderThemeData(
-                    trackShape: CustomTrackShape(),
-                    overlayShape: SliderComponentShape.noThumb,
-                    thumbShape: const RoundSliderThumbShape(
-                        pressedElevation: 0, enabledThumbRadius: 5),
-                    trackHeight: 2),
-                child: Slider(
-                  min: 0,
-                  max: 100,
-                  // divisions: 100,
-                  value: sliderVal.toDouble(),
-                  thumbColor: Theme.of(context).primaryColor,
-                  activeColor: Theme.of(context).primaryColor,
-                  inactiveColor: Color(0xff3E3D3D),
-                  onChanged: (double value) {
-                    setState(() {
-                      sliderVal = value;
-                    });
-                    widget.controller.seekTo(Duration(
-                        seconds: ((value / 100) *
-                                widget.controller.value.duration.inSeconds)
-                            .toInt()));
-                  },
-                ),
+              child: av.ProgressBar(
+                thumbRadius: 5,
+                thumbGlowRadius: 0,
+                thumbColor: Theme.of(context).primaryColor,
+                progressBarColor: Theme.of(context).primaryColor,
+                baseBarColor: const Color(0xff3E3D3D),
+                timeLabelTextStyle: progressStyle,
+                barHeight: Theme.of(context).sliderTheme.trackHeight ?? 3,
+                timeLabelLocation: av.TimeLabelLocation.sides,
+                timeLabelType: av.TimeLabelType.totalTime,
+                bufferedBarColor:
+                    Theme.of(context).primaryColor.withOpacity(.4),
+                onSeek: (value) => widget.controller.seekTo(value),
+                total: widget.controller.value.duration,
+                progress: widget.controller.value.position,
+                buffered: Duration(
+                    seconds: widget.controller.value.buffered.fold(
+                        0,
+                        (previousValue, element) =>
+                            previousValue +
+                            (element.end.inSeconds - element.start.inSeconds))),
               ),
             ),
             const SizedBox(
               width: 10,
-            ),
-            Text(
-              printDuration(widget.controller.value.duration),
-              style: progressStyle,
             ),
           ],
         ),
