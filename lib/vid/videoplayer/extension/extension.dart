@@ -3,20 +3,7 @@ part of 'package:aveoplayer/aveoplayer.dart';
 extension Features on VideoPlayerController {
   @internal
   static final ValueNotifier<bool> _fullscr = ValueNotifier(false);
-  ValueListenable<bool> isFullScreen() => _fullscr;
-
-  // Stream<double> currentPosition(
-  //     {Duration interval = const Duration(seconds: 1),
-  //     bool forSeek = true}) async* {
-  //   int total = value.duration.inSeconds;
-  //   int current = 0;
-  //   Timer.periodic(interval, (timer) async* {
-  //     current = (await position)?.inSeconds??0;
-  //     if (forSeek) {
-  //       yield current/total;
-  //     }
-  //   });
-  // }
+  ValueListenable<bool> get isFullScreen => _fullscr;
 
   toggleFullScreen(BuildContext context) {
     if (!kIsWeb) {

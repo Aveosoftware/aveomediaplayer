@@ -23,7 +23,9 @@ class _VideoStackState extends State<VideoStack>
     with SingleTickerProviderStateMixin {
   late AnimationController animationController;
   late Animation<double> animation;
+  late Timer bufferCheckTimer;
   ValueNotifier<bool> showControls = ValueNotifier(true);
+  ValueNotifier<bool> showLoader = ValueNotifier(true);
 
   dismissControls([bool init = false]) {
     if (!init) {
@@ -34,10 +36,17 @@ class _VideoStackState extends State<VideoStack>
     });
   }
 
+  buferChecker() {
+    bufferCheckTimer = Timer.periodic(const Duration(milliseconds: 500), (_) {
+      showLoader.value = widget.videoPlayerController.value.isBuffering;
+    });
+  }
+
   @override
   void dispose() {
     animationController.stop();
     animationController.dispose();
+    bufferCheckTimer.cancel();
     super.dispose();
   }
 
@@ -59,58 +68,80 @@ class _VideoStackState extends State<VideoStack>
     animation = Tween<double>(begin: 1, end: 0).animate(
         CurvedAnimation(parent: animationController, curve: Curves.easeIn));
     dismissControls(true);
+    buferChecker();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Material(
-      child: AspectRatio(
-        aspectRatio: widget.aspectRatio,
-        child: Stack(
-          children: [
-            VideoPlayer(
-              widget.videoPlayerController,
-            ),
-            GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                log('top');
-                showControls.value = !showControls.value;
-              },
-            ),
-            Positioned(
-              top: 0,
-              child: FadeTransition(
-                opacity: animation,
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  // height:
-                  //     (widget.aspectRatio * MediaQuery.of(context).size.width) *
-                  //         .2,
-                  child:
-                      widget.topActions?.call(widget.videoPlayerController) ??
+      child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () => showControls.value = !showControls.value,
+        child: AspectRatio(
+          aspectRatio: widget.aspectRatio,
+          child: Stack(
+            children: [
+              VideoPlayer(
+                widget.videoPlayerController,
+              ),
+              ValueListenableBuilder<bool>(
+                valueListenable: showLoader,
+                builder: (context, value, child) {
+                  return Visibility(visible: value, child: child!);
+                },
+                child: const Center(
+                  child: SizedBox.square(
+                    dimension: 50,
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 0,
+                child: FadeTransition(
+                  opacity: animation,
+                  child: ValueListenableBuilder<double>(
+                    valueListenable: animation,
+                    builder: (context, value, child) {
+                      return AbsorbPointer(
+                        absorbing: value < .5,
+                        child: child,
+                      );
+                    },
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: widget.topActions
+                              ?.call(widget.videoPlayerController) ??
                           const SizedBox.shrink(),
+                    ),
+                  ),
                 ),
               ),
-            ),
-            Positioned(
-              bottom: 0,
-              child: FadeTransition(
-                opacity: animation,
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  // height: double.infinity * .3,
-                  // (widget.aspectRatio * MediaQuery.of(context).size.width) *
-                  //     .7,
-                  child: widget.bottomActions
-                          ?.call(widget.videoPlayerController) ??
-                      DefaultBottomControls(
-                          controller: widget.videoPlayerController),
+              Positioned(
+                bottom: 0,
+                child: FadeTransition(
+                  opacity: animation,
+                  child: ValueListenableBuilder<double>(
+                    valueListenable: animation,
+                    builder: (context, value, child) {
+                      return AbsorbPointer(
+                        absorbing: value < 0.5,
+                        child: child,
+                      );
+                    },
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: widget.bottomActions
+                              ?.call(widget.videoPlayerController) ??
+                          DefaultBottomControls(
+                              controller: widget.videoPlayerController),
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

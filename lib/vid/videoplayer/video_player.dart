@@ -203,6 +203,13 @@ class AveoVideoPlayerState extends State<AveoVideoPlayer> {
 
   @override
   void initState() {
+    widget.videoPlayerController.addListener(() {
+      if (widget.videoPlayerController.value.hasError) {
+        state.value = VPError(
+            error: widget.videoPlayerController.value.errorDescription ??
+                'Something went wrong');
+      }
+    });
     reInitStates();
     super.initState();
   }
@@ -239,7 +246,7 @@ class AveoVideoPlayerState extends State<AveoVideoPlayer> {
           temp = widget.placeHolder;
         }
         return ValueListenableBuilder<bool>(
-            valueListenable: widget.videoPlayerController.isFullScreen(),
+            valueListenable: widget.videoPlayerController.isFullScreen,
             builder: ((context, value, child) {
               return value
                   ? WillPopScope(
