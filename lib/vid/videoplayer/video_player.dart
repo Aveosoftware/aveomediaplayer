@@ -3,6 +3,13 @@ part of 'package:aveoplayer/aveoplayer.dart';
 class AveoVideoPlayer extends StatefulWidget {
   VideoPlayerController videoPlayerController;
   final bool autoplay;
+  final Color overlayColor;
+
+  ///will prvide this color to default bottomSheets like Playback speed
+  final Color? bottomSheetColor;
+
+  ///You can use this to give a linear gradient to controller overlay
+  final List<double> overlayOpacity;
 
   final Future<ClosedCaptionFile>? closedCaptionFile;
   final VideoPlayerOptions? videoPlayerOptions;
@@ -40,6 +47,9 @@ class AveoVideoPlayer extends StatefulWidget {
       this.autoplay = false,
       this.topActions,
       this.bottomActions,
+      this.overlayColor = Colors.black,
+      this.overlayOpacity = const [.5],
+      this.bottomSheetColor,
       this.placeHolder = const DefaultLoading(),
       this.errorWidget})
       : super(key: key);
@@ -60,6 +70,9 @@ class AveoVideoPlayer extends StatefulWidget {
       this.autoplay = false,
       this.topActions,
       this.bottomActions,
+      this.overlayColor = Colors.black,
+      this.overlayOpacity = const [.5],
+      this.bottomSheetColor,
       this.placeHolder = const DefaultLoading(),
       this.errorWidget})
       : videoPlayerController = VideoPlayerController.network(uri,
@@ -83,6 +96,9 @@ class AveoVideoPlayer extends StatefulWidget {
       this.autoplay = false,
       this.topActions,
       this.bottomActions,
+      this.overlayColor = Colors.black,
+      this.overlayOpacity = const [.5],
+      this.bottomSheetColor,
       this.placeHolder = const DefaultLoading(),
       this.errorWidget})
       : videoPlayerController = VideoPlayerController.file(file,
@@ -104,6 +120,9 @@ class AveoVideoPlayer extends StatefulWidget {
       this.topActions,
       this.onComplete,
       this.bottomActions,
+      this.overlayColor = Colors.black,
+      this.overlayOpacity = const [.5],
+      this.bottomSheetColor,
       this.placeHolder = const DefaultLoading(),
       this.errorWidget})
       : videoPlayerController = VideoPlayerController.asset(uri,
@@ -126,6 +145,9 @@ class AveoVideoPlayer extends StatefulWidget {
       this.topActions,
       this.onComplete,
       this.bottomActions,
+      this.overlayColor = Colors.black,
+      this.overlayOpacity = const [.5],
+      this.bottomSheetColor,
       this.placeHolder = const DefaultLoading(),
       this.errorWidget})
       : videoPlayerController = VideoPlayerController.contentUri(uri,
@@ -188,6 +210,9 @@ class AveoVideoPlayerState extends State<AveoVideoPlayer> {
           aspectRatio: widget.videoPlayerController.value.aspectRatio,
           topActions: widget.topActions,
           bottomActions: widget.bottomActions,
+          overlayColor: widget.overlayColor,
+          overlayOpacity: widget.overlayOpacity,
+          bottomSheetColor: widget.bottomSheetColor,
         );
         setState(() {});
         if (widget.autoplay) {

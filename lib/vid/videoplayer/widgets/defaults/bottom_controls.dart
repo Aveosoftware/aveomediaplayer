@@ -2,7 +2,9 @@ part of 'package:aveoplayer/aveoplayer.dart';
 
 class DefaultBottomControls extends StatefulWidget {
   final VideoPlayerController controller;
-  const DefaultBottomControls({Key? key, required this.controller})
+  final Color? bottomSheetColor;
+  const DefaultBottomControls(
+      {Key? key, required this.controller, this.bottomSheetColor})
       : super(key: key);
 
   @override
@@ -44,6 +46,7 @@ class _DefaultBottomControlsState extends State<DefaultBottomControls> {
                   onPressed: () => showModalBottomSheet(
                       context: context,
                       builder: (_) => PlaybackSpeedVimeo(
+                            bottomSheetColor: widget.bottomSheetColor,
                             controller: widget.controller,
                           ),
                       backgroundColor: Colors.white),

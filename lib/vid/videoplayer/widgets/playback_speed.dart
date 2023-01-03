@@ -4,15 +4,17 @@ class PlaybackSpeedVimeo extends StatelessWidget {
   const PlaybackSpeedVimeo({
     Key? key,
     required this.controller,
+    this.bottomSheetColor,
   }) : super(key: key);
 
   final VideoPlayerController controller;
+  final Color? bottomSheetColor;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: MediaQuery.of(context).size.height * .35,
-      color: Theme.of(context).backgroundColor,
+      color: bottomSheetColor ?? Theme.of(context).backgroundColor,
       child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Column(

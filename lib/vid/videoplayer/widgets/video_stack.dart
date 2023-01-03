@@ -3,6 +3,9 @@ part of 'package:aveoplayer/aveoplayer.dart';
 class VideoStack extends StatefulWidget {
   final VideoPlayerController videoPlayerController;
   final double aspectRatio;
+  final Color overlayColor;
+  final Color? bottomSheetColor;
+  final List<double> overlayOpacity;
   final Widget Function(VideoPlayerController videoplayerController)?
       topActions;
   final Widget Function(VideoPlayerController videoplayerController)?
@@ -12,6 +15,9 @@ class VideoStack extends StatefulWidget {
       required this.videoPlayerController,
       this.aspectRatio = 1,
       this.topActions,
+      required this.overlayColor,
+      required this.overlayOpacity,
+      this.bottomSheetColor,
       this.bottomActions})
       : super(key: key);
 
@@ -85,6 +91,30 @@ class _VideoStackState extends State<VideoStack>
               VideoPlayer(
                 widget.videoPlayerController,
               ),
+              FadeTransition(
+                opacity: animation,
+                child: ValueListenableBuilder<double>(
+                  valueListenable: animation,
+                  builder: (context, value, child) {
+                    return AbsorbPointer(
+                      absorbing: value < .5,
+                      child: child,
+                    );
+                  },
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              colors: List.generate(
+                                  widget.overlayOpacity.length,
+                                  (index) => widget.overlayColor.withOpacity(
+                                      widget.overlayOpacity[index])))),
+                    ),
+                  ),
+                ),
+              ),
               ValueListenableBuilder<bool>(
                 valueListenable: showLoader,
                 builder: (context, value, child) {
@@ -135,6 +165,7 @@ class _VideoStackState extends State<VideoStack>
                       child: widget.bottomActions
                               ?.call(widget.videoPlayerController) ??
                           DefaultBottomControls(
+                              bottomSheetColor: widget.bottomSheetColor,
                               controller: widget.videoPlayerController),
                     ),
                   ),
