@@ -6,6 +6,7 @@ class VideoStack extends StatefulWidget {
   final Color overlayColor;
   final Color? bottomSheetColor;
   final List<double> overlayOpacity;
+  final Function? onComplete;
   final Widget Function(VideoPlayerController videoplayerController)?
       topActions;
   final Widget Function(VideoPlayerController videoplayerController)?
@@ -17,6 +18,7 @@ class VideoStack extends StatefulWidget {
       this.topActions,
       required this.overlayColor,
       required this.overlayOpacity,
+      this.onComplete,
       this.bottomSheetColor,
       this.bottomActions})
       : super(key: key);
@@ -48,6 +50,38 @@ class _VideoStackState extends State<VideoStack>
     });
   }
 
+  bool onCompleteCalled = false;
+
+  voidFunc get _onCompleteClosure => () {
+        try {
+          if (!widget.videoPlayerController.value.isLooping) {
+            if (mounted) {
+              int position =
+                  widget.videoPlayerController.value.position.inSeconds;
+              int duration =
+                  widget.videoPlayerController.value.duration.inSeconds;
+
+              print('log: position: $position duration: $duration');
+              print('log: ${widget.videoPlayerController.dataSource}');
+              if (widget.videoPlayerController.value.position.inSeconds ==
+                      widget.videoPlayerController.value.duration.inSeconds &&
+                  !onCompleteCalled) {
+                onCompleteCalled = true;
+                widget.onComplete?.call();
+              }
+              if (onCompleteCalled &&
+                  widget.videoPlayerController.value.position.inSeconds !=
+                      widget.videoPlayerController.value.duration.inSeconds) {
+                onCompleteCalled = false;
+              }
+            }
+          }
+        } catch (_) {
+          onCompleteCalled = true;
+          widget.onComplete?.call();
+        }
+      };
+
   @override
   void dispose() {
     animationController.stop();
@@ -58,6 +92,7 @@ class _VideoStackState extends State<VideoStack>
 
   @override
   void initState() {
+    widget.videoPlayerController.addListener(_onCompleteClosure);
     showControls.addListener(() {
       if (showControls.value) {
         dismissControls();
@@ -110,7 +145,9 @@ class _VideoStackState extends State<VideoStack>
                               colors: List.generate(
                                   widget.overlayOpacity.length,
                                   (index) => widget.overlayColor.withOpacity(
-                                      widget.overlayOpacity[index])))),
+                                      widget.overlayOpacity[index])),
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter)),
                     ),
                   ),
                 ),
