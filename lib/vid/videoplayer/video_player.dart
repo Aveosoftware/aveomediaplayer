@@ -48,7 +48,7 @@ class AveoVideoPlayer extends StatefulWidget {
       this.topActions,
       this.bottomActions,
       this.overlayColor = Colors.black,
-      this.overlayOpacity = const [.5],
+      this.overlayOpacity = const [.5, .5],
       this.bottomSheetColor,
       this.placeHolder = const DefaultLoading(),
       this.errorWidget})
@@ -71,7 +71,7 @@ class AveoVideoPlayer extends StatefulWidget {
       this.topActions,
       this.bottomActions,
       this.overlayColor = Colors.black,
-      this.overlayOpacity = const [.5],
+      this.overlayOpacity = const [.5, .5],
       this.bottomSheetColor,
       this.placeHolder = const DefaultLoading(),
       this.errorWidget})
@@ -97,7 +97,7 @@ class AveoVideoPlayer extends StatefulWidget {
       this.topActions,
       this.bottomActions,
       this.overlayColor = Colors.black,
-      this.overlayOpacity = const [.5],
+      this.overlayOpacity = const [.5, .5],
       this.bottomSheetColor,
       this.placeHolder = const DefaultLoading(),
       this.errorWidget})
@@ -121,7 +121,7 @@ class AveoVideoPlayer extends StatefulWidget {
       this.onComplete,
       this.bottomActions,
       this.overlayColor = Colors.black,
-      this.overlayOpacity = const [.5],
+      this.overlayOpacity = const [.5, .5],
       this.bottomSheetColor,
       this.placeHolder = const DefaultLoading(),
       this.errorWidget})
@@ -146,7 +146,7 @@ class AveoVideoPlayer extends StatefulWidget {
       this.onComplete,
       this.bottomActions,
       this.overlayColor = Colors.black,
-      this.overlayOpacity = const [.5],
+      this.overlayOpacity = const [.5, .5],
       this.bottomSheetColor,
       this.placeHolder = const DefaultLoading(),
       this.errorWidget})
@@ -163,30 +163,6 @@ class AveoVideoPlayerState extends State<AveoVideoPlayer> {
   Widget _videoPlayer = const DefaultLoading();
 
   ValueNotifier<VideoPlayerState> state = ValueNotifier(_VPInit());
-  bool onCompleteCalled = false;
-
-  voidFunc get _onCompleteClosure => () {
-        try {
-          if (!widget.videoPlayerController.value.isLooping) {
-            if (mounted) {
-              if (widget.videoPlayerController.value.position.inSeconds ==
-                      widget.videoPlayerController.value.duration.inSeconds &&
-                  !onCompleteCalled) {
-                onCompleteCalled = true;
-                widget.onComplete?.call();
-              }
-              if (onCompleteCalled &&
-                  widget.videoPlayerController.value.position.inSeconds !=
-                      widget.videoPlayerController.value.duration.inSeconds) {
-                onCompleteCalled = false;
-              }
-            }
-          }
-        } catch (_) {
-          onCompleteCalled = true;
-          widget.onComplete?.call();
-        }
-      };
 
   @override
   void didUpdateWidget(AveoVideoPlayer oldWidget) {
@@ -201,7 +177,6 @@ class AveoVideoPlayerState extends State<AveoVideoPlayer> {
 
   void reInitStates() {
     state.addListener(() {});
-    widget.videoPlayerController.addListener(_onCompleteClosure);
     state.value = VPLoading();
     try {
       widget.videoPlayerController.initialize().then((_) {
@@ -213,6 +188,7 @@ class AveoVideoPlayerState extends State<AveoVideoPlayer> {
           overlayColor: widget.overlayColor,
           overlayOpacity: widget.overlayOpacity,
           bottomSheetColor: widget.bottomSheetColor,
+          onComplete: widget.onComplete,
         );
         setState(() {});
         if (widget.autoplay) {
@@ -247,7 +223,7 @@ class AveoVideoPlayerState extends State<AveoVideoPlayer> {
 
   @override
   void dispose() {
-    widget.videoPlayerController.removeListener(_onCompleteClosure);
+    // widget.videoPlayerController.removeListener(_onCompleteClosure);
     widget.videoPlayerController.dispose();
     super.dispose();
   }
